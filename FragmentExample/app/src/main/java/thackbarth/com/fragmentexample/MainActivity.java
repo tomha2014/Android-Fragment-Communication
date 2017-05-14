@@ -17,14 +17,24 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static android.R.id.list;
 
 public class MainActivity extends AppCompatActivity
 {
     FragmentManager manager = null;
+
+    TextView ConsoleOut;
+    String consoleText ="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -44,6 +54,8 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
+
+        ConsoleOut = (TextView) findViewById(R.id.ConsoleOut);
 
         manager = getFragmentManager();
     }
@@ -166,16 +178,12 @@ public class MainActivity extends AppCompatActivity
 
             String msg = intent.getStringExtra("msg");
             intent.putExtra("msg", TAG + " : onResume");
-            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
-        }
+//            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+
+            consoleText = consoleText + "\n\r"+msg;
+            ConsoleOut.setText(consoleText);
+         }
     };
-
-    public void onSendClick(View view)
-    {
-        Intent intent = new Intent("TestMsg");
-
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-    }
 
 
     public void TestMainFragements()
@@ -192,22 +200,44 @@ public class MainActivity extends AppCompatActivity
                     public void run()
                     {
 
-                        Log.i(TAG, "==================");
-                        Log.i(TAG, "==================");
+
+
                         Fragment1 Frag_A = (Fragment1) manager.findFragmentByTag("Frag_A");
+                        ChildFragment Child = (ChildFragment) manager.findFragmentByTag("child");
+
                         Fragment2 Frag_B = (Fragment2) manager.findFragmentByTag("Frag_B");
 
                         if (Frag_A != null)
-                            Log.i(TAG, "TestMainFragements: Frag_A Exists");
+                        {
+                            Intent intent = new Intent("Log");
+                            intent.putExtra("msg", "TestMainFragements: Frag_A Exists");
+                            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+                        }
+
 
                         if (Frag_B != null)
-                            Log.i(TAG, "TestMainFragements: Frag_B Exists");
+                        {
+                            Intent intent = new Intent("Log");
+                            intent.putExtra("msg", "TestMainFragements: Frag_B Exists");
+                            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+                        }
 
-                        if ((Frag_A == null) && (Frag_B == null))
-                            Log.i(TAG, "TestMainFragements: All Fragments gone!");
 
-                        Log.i(TAG, "==================");
-                        Log.i(TAG, "==================");
+                        if (Child != null)
+                        {
+                            Intent intent = new Intent("Log");
+                            intent.putExtra("msg", "TestMainFragements: CHILD Exists");
+                            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+                        }
+
+                        if ( (Frag_A == null) && (Frag_B == null) && (Child == null) )
+                        {
+                            Intent intent = new Intent("Log");
+                            intent.putExtra("msg", "TestMainFragements: All Fragments removed");
+                            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+                        }
+
+
                     }
                 });
             }
