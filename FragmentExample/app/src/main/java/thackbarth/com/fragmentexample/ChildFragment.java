@@ -13,6 +13,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 
 /**
@@ -72,16 +75,30 @@ public class ChildFragment extends BaseFragment
                              Bundle savedInstanceState)
     {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_child, container, false);
-    }
+        View v = inflater.inflate(R.layout.fragment_child, container, false);
 
+        final EditText et = (EditText) v.findViewById(R.id.sendMessage);
+        Button b = (Button) v.findViewById(R.id.sendButton);
+        b.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent("Log");
+                intent.putExtra("msg", "Msg send via child : "+et.getText().toString());
+                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+            }
+        });
+
+        return v;
+    }
 
     public void onResume()
     {
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(ChangeDepartment, new IntentFilter("TestMsg"));
 
         Intent intent = new Intent("Log");
-        intent.putExtra("msg",TAG+" : onResume");
+        intent.putExtra("msg", TAG + " : onResume");
         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
 
 
@@ -89,22 +106,30 @@ public class ChildFragment extends BaseFragment
     }
 
     private static final String TAG = "ChildFragment";
+
     @Override
     public void onPause()
     {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(ChangeDepartment);
         Intent intent = new Intent("Log");
-        intent.putExtra("msg",TAG+" : onPause");
+        intent.putExtra("msg", TAG + " : onPause");
         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
         super.onPause();
     }
 
-    private final BroadcastReceiver ChangeDepartment = new BroadcastReceiver() {
+    private final BroadcastReceiver ChangeDepartment = new BroadcastReceiver()
+    {
 
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(Context context, Intent intent)
+        {
 
             Log.i(TAG, "onReceive: GOT MESSAGE");
         }
     };
+
+    public void onSendMessageClick(View view)
+    {
+        Log.i(TAG, "onSendMessageClick: click");
+    }
 }
