@@ -1,11 +1,16 @@
 package thackbarth.com.fragmentexample;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -16,9 +21,14 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.R.attr.tag;
 
@@ -46,11 +56,6 @@ public class MainActivity extends AppCompatActivity
         });
 
         manager = getFragmentManager();
-
-//        Fragment1 f1 = new Fragment1();
-//        FragmentTransaction ft = manager.beginTransaction();
-//        ft.add(R.id.container, f1, "f1");
-//        ft.commit();
     }
 
 
@@ -73,6 +78,7 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings)
         {
+            TestMainFragements();
             return true;
         }
 
@@ -81,11 +87,13 @@ public class MainActivity extends AppCompatActivity
 
     public void onAddAClick(View view)
     {
-        Fragment1 f1 = new Fragment1();
+        Fragment1 Frag_A = new Fragment1();
         FragmentTransaction ft = manager.beginTransaction();
         ft.setCustomAnimations(R.animator.enter_from_left, R.animator.exit_to_right);
-        ft.add(R.id.container, f1, "f1");
+        ft.add(R.id.container, Frag_A, "Frag_A");
         ft.commit();
+
+        TestMainFragements();
     }
 
     private static final String TAG = "MainActivity";
@@ -93,47 +101,121 @@ public class MainActivity extends AppCompatActivity
     public void onRemAClick(View view)
     {
 
-        Fragment1 f1 = (Fragment1) manager.findFragmentByTag("f1");
-        if (f1 != null)
+        Fragment1 Frag_A = (Fragment1) manager.findFragmentByTag("Frag_A");
+        if (Frag_A != null)
         {
             FragmentTransaction ft = manager.beginTransaction();
             ft.setCustomAnimations(R.animator.enter_from_left, R.animator.exit_to_right);
-            ft.remove(f1);
+            ft.remove(Frag_A);
             ft.commit();
         } else
         {
             Log.i(TAG, "onRemAClick: NOT FOUND");
         }
+
+        TestMainFragements();
+
     }
 
     public void onRepAClick(View view)
     {
-        Fragment2 f2 = new Fragment2();
+        Fragment2 Frag_B = new Fragment2();
         FragmentTransaction ft = manager.beginTransaction();
         ft.setCustomAnimations(R.animator.enter_from_left, R.animator.exit_to_right);
-        ft.replace(R.id.container, f2, "f2");
+        ft.replace(R.id.container, Frag_B, "Frag_B");
         ft.commit();
+
+        TestMainFragements();
     }
 
     public void onRemBClick(View view)
     {
-        Fragment2 f1 = (Fragment2) manager.findFragmentByTag("f2");
-        if (f1 != null)
+        Fragment2 Frag_A = (Fragment2) manager.findFragmentByTag("Frag_B");
+        if (Frag_A != null)
         {
             FragmentTransaction ft = manager.beginTransaction();
             ft.setCustomAnimations(R.animator.enter_from_left, R.animator.exit_to_right);
-            ft.remove(f1);
+            ft.remove(Frag_A);
             ft.commit();
         } else
         {
             Log.i(TAG, "onRemBClick: NOT FOUND");
         }
+
+        TestMainFragements();
     }
+
+
+    public void onResume()
+    {
+        LocalBroadcastManager.getInstance(this).registerReceiver(ChangeDepartment, new IntentFilter("Log"));
+        super.onResume();
+        TestMainFragements();
+    }
+
+    @Override
+    public void onPause()
+    {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(ChangeDepartment);
+        super.onPause();
+
+        TestMainFragements();
+    }
+
+    private final BroadcastReceiver ChangeDepartment = new BroadcastReceiver()
+    {
+
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+//            Toast.makeText(getApplicationContext(), "here", Toast.LENGTH_SHORT).show();
+//            Log.i(TAG, "onReceive: GOT MESSAGE");
+        }
+    };
 
     public void onSendClick(View view)
     {
         Intent intent = new Intent("TestMsg");
 
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+
+    public void TestMainFragements()
+    {
+
+        final Handler handler = new Handler();
+        Timer t = new Timer();
+        t.schedule(new TimerTask()
+        {
+            public void run()
+            {
+                handler.post(new Runnable()
+                {
+                    public void run()
+                    {
+
+                        Log.i(TAG, "==================");
+                        Log.i(TAG, "==================");
+                        Fragment1 Frag_A = (Fragment1) manager.findFragmentByTag("Frag_A");
+                        Fragment2 Frag_B = (Fragment2) manager.findFragmentByTag("Frag_B");
+
+                        if (Frag_A != null)
+                            Log.i(TAG, "TestMainFragements: Frag_A Exists");
+
+                        if (Frag_B != null)
+                            Log.i(TAG, "TestMainFragements: Frag_B Exists");
+
+                        if ((Frag_A == null) && (Frag_B == null))
+                            Log.i(TAG, "TestMainFragements: All Fragments gone!");
+
+                        Log.i(TAG, "==================");
+                        Log.i(TAG, "==================");
+                    }
+                });
+            }
+        }, 1000);
+
+
     }
 }

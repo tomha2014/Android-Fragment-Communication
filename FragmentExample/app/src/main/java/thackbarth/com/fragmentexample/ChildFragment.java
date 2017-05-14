@@ -79,6 +79,12 @@ public class ChildFragment extends BaseFragment
     public void onResume()
     {
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(ChangeDepartment, new IntentFilter("TestMsg"));
+
+        Intent intent = new Intent("Log");
+        intent.putExtra("msg",TAG+" : onResume");
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+
+
         super.onResume();
     }
 
@@ -87,6 +93,9 @@ public class ChildFragment extends BaseFragment
     public void onPause()
     {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(ChangeDepartment);
+        Intent intent = new Intent("Log");
+        intent.putExtra("msg",TAG+" : onPause");
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
         super.onPause();
     }
 

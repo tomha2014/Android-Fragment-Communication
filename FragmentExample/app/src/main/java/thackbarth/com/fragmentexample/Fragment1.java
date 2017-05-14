@@ -95,7 +95,7 @@ public class Fragment1 extends BaseFragment
     @Override
     public void onPause()
     {
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(ChangeDepartment);
+//        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(ChangeDepartment);
 
         Log.i(TAG, "onResume: ====================");
 
