@@ -245,4 +245,11 @@ public class MainActivity extends AppCompatActivity
 
 
     }
+
+    public void onSendMsgToKid(View view)
+    {
+        Intent intent = new Intent("ChildMsg");
+        intent.putExtra("msg", "Msg from Main Activity");
+        LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+    }
 }

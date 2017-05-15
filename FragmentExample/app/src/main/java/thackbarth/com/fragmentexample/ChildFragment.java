@@ -1,7 +1,6 @@
 package thackbarth.com.fragmentexample;
 
 
-import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 
 /**
@@ -95,7 +93,7 @@ public class ChildFragment extends BaseFragment
 
     public void onResume()
     {
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(ChangeDepartment, new IntentFilter("TestMsg"));
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(ChildMsgHandler, new IntentFilter("ChildMsg"));
 
         Intent intent = new Intent("Log");
         intent.putExtra("msg", TAG + " : onResume");
@@ -110,14 +108,14 @@ public class ChildFragment extends BaseFragment
     @Override
     public void onPause()
     {
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(ChangeDepartment);
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(ChildMsgHandler);
         Intent intent = new Intent("Log");
         intent.putExtra("msg", TAG + " : onPause");
         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
         super.onPause();
     }
 
-    private final BroadcastReceiver ChangeDepartment = new BroadcastReceiver()
+    private final BroadcastReceiver ChildMsgHandler = new BroadcastReceiver()
     {
 
         @Override
@@ -125,6 +123,11 @@ public class ChildFragment extends BaseFragment
         {
 
             Log.i(TAG, "onReceive: GOT MESSAGE");
+
+            String msg = intent.getStringExtra("msg");
+            Intent intent1 = new Intent("Log");
+            intent1.putExtra("msg", msg + " : Sent from Child");
+            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent1);
         }
     };
 

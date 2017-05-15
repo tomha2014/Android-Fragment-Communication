@@ -86,7 +86,6 @@ public class Fragment1 extends BaseFragment
     @Override
     public void onResume()
     {
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(ChangeDepartment, new IntentFilter("TestMsg"));
 
 
         super.onResume();
@@ -95,9 +94,6 @@ public class Fragment1 extends BaseFragment
     @Override
     public void onPause()
     {
-//        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(ChangeDepartment);
-
-        Log.i(TAG, "onResume: ====================");
 
         // To demo the issue change the tag from "child" to "kid"
         // something it can not find
@@ -115,19 +111,8 @@ public class Fragment1 extends BaseFragment
             Log.i(TAG, "ChildFragment: NOT FOUND");
         }
 
-        Log.i(TAG, "onResume: ====================");
-
         super.onPause();
     }
 
-    private final BroadcastReceiver ChangeDepartment = new BroadcastReceiver()
-    {
 
-        @Override
-        public void onReceive(Context context, Intent intent)
-        {
-
-            Log.i(TAG, "onReceive: GOT MESSAGE");
-        }
-    };
 }

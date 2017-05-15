@@ -43,6 +43,12 @@
             android:onClick="onRepAClick"
             android:text="Rep A with B"/>
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onSendMsgToKid"
+            android:text="Msg Child"/>
+
     </LinearLayout>
 
     <FrameLayout
